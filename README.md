@@ -1,5 +1,5 @@
 # 2021ESNDiscussion
-Public codes for "Forecasting Quasi-Periodic Multi-Year Climate Processes with Transfer Learning and Stochastic Dynamic Neural Networks"
+Public codes for "Forecasting Quasi-Periodic Multi-Year Climate Processes with Transfer Learning and Stochastic Dynamic Neural Networks" by Matthew Bonas and Stefano Castruccio
 
 ## Data
 Data folder contains a dataset "SimulatedData.RData" with 10 variables (locations) and 500 time points. This data is to be used in conjunction with the R scripts.
