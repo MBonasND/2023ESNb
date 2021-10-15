@@ -2,7 +2,7 @@
 Public codes for "Forecasting Quasi-Periodic Multi-Year Climate Processes with Transfer Learning and Stochastic Dynamic Neural Networks" by Matthew Bonas and Stefano Castruccio
 
 ## Data
-Data folder contains a dataset "SimulatedData.RData" with 10 variables (locations) and 500 time points. This data is to be used in conjunction with the R scripts.
+A dataset "SimulatedData.RData" with 10 variables (locations) and 500 time points. This data is to be used in conjunction with the R scripts.
 
 ## functions.R
 R script containing the user created functions used in both longrangeforecasting.R and calibration.R. This script does not need to be run manually for the other files automatically import the functions from this file.
