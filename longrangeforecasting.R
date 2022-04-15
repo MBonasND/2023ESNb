@@ -34,19 +34,19 @@ n.h = 60
 nu = 0.55
 lambda.r = 0.001
 m = 4
-alpha = 0.0023
+alpha = 0.01
+pi.w = 0.1
+pi.win = 0.1
 
 #Fixed parameters
-pi.w = 0.1
 eta.w = 0.1 #only needed if distribution = 'Unif'
-pi.win = 0.1
 eta.win = 0.1 #only needed if distribution = 'Unif'
 iterations = 100
 tau = 1
 trainLen = 400
 testLen = 1
 future = 1
-forward = 20
+forward = 10
 locations = 10
 rawData = sim.dat
 
@@ -101,8 +101,9 @@ for(f in 1:forward)
                          polynomial = 1,
                          scale.factor = y.scale,
                          scale.matrix = addScaleMat,
-                         verbose = F,
-                         parallel = T)
+                         verbose = T,
+                         parallel = F,
+                         fork = F)
   
   #Save predictions for each ensemble iteration
   mean.pred[,,f] = testing$predictions
@@ -118,12 +119,11 @@ for(f in 1:forward)
   testindex = testindex + 1
   
   #print progress
-  print(f)
+  #print(f)
 }
 
 
 #Forecast averages & MSE
 forc.mean = t(sapply(1:locations, function(x) colMeans(mean.pred[x,,])))
 mse = sum((t(sets$yTest)-forc.mean)^2)/(forward*locations); mse
-
 
