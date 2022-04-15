@@ -34,26 +34,27 @@ n.h = 60
 nu = 0.55
 lambda.r = 0.001
 m = 4
-alpha = 0.01
-pi.w = 0.1
-pi.win = 0.1
+alpha = 0.0023
 
 #Fixed parameters
+pi.w = 0.1
 eta.w = 0.1 #only needed if distribution = 'Unif'
+pi.win = 0.1
 eta.win = 0.1 #only needed if distribution = 'Unif'
 iterations = 100
 tau = 1
 trainLen = 400
 testLen = 1
 future = 1
-forward = 10
+forward = 20
 locations = 10
 rawData = sim.dat
 
 #Create training and testing sets
 sets = cttv(rawData, tau, trainLen, forward)
 new.train = sets$yTrain
-testindex = sets$xTestIndex[1]-1
+testindex = sets$xTestIndex[1]
+newRaw = rawData[1:testindex,]
 
 #Preallocate empty results matrix
 mean.pred = array(NaN, dim = c(locations, iterations, forward))
@@ -67,7 +68,7 @@ for(f in 1:forward)
                              m = m,
                              tau = tau,
                              yTrain = new.train,
-                             rawData = new.train,
+                             rawData = newRaw,
                              locations = locations,
                              xTestIndex = testindex,
                              testLen = testLen)
@@ -100,9 +101,8 @@ for(f in 1:forward)
                          polynomial = 1,
                          scale.factor = y.scale,
                          scale.matrix = addScaleMat,
-                         verbose = T,
-                         parallel = F,
-                         fork = F)
+                         verbose = F,
+                         parallel = T)
   
   #Save predictions for each ensemble iteration
   mean.pred[,,f] = testing$predictions
@@ -111,17 +111,19 @@ for(f in 1:forward)
   
   #Append mean of ensembles to training data
   new.train = rbind(new.train, testing$forecastmean)
+  newRaw = rbind(newRaw, testing$forecastmean)
   
   #Update all values for next future point
   trainLen = trainLen + 1
   testindex = testindex + 1
   
   #print progress
-  #print(f)
+  print(f)
 }
 
 
 #Forecast averages & MSE
 forc.mean = t(sapply(1:locations, function(x) colMeans(mean.pred[x,,])))
 mse = sum((t(sets$yTest)-forc.mean)^2)/(forward*locations); mse
+
 
