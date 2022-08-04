@@ -30,24 +30,27 @@ options(cores = 4)
 
 #Parameter specification
 #User should perform a CV to determine parameter values
-n.h = 60
-nu = 0.55
-lambda.r = 0.001
+first.n.h = 150
+last.n.h = 40
+nu = c(0.4,1.0,1.0)
+lambda.r = 0.1
 m = 4
-alpha = 0.01
-pi.w = 0.1
-pi.win = 0.1
+alpha = 0.5
+reduced.units = 10
 
 #Fixed parameters
-eta.w = 0.1 #only needed if distribution = 'Unif'
-eta.win = 0.1 #only needed if distribution = 'Unif'
-iterations = 100
 tau = 1
+layers = 3
+pi.w = rep(0.1, layers)
+pi.win = rep(0.1, layers)
+eta.w = rep(0.1, layers)
+eta.win = rep(0.1, layers)
 trainLen = 400
 testLen = 1
 future = 1
 forward = 10
 locations = 10
+iterations = 100
 rawData = sim.dat
 
 #Create training and testing sets
@@ -79,31 +82,34 @@ for(f in 1:forward)
   addScaleMat = input.dat$addScaleMat
   
   
-  #Begin ESN forecasting
-  testing = ensemble.esn(y.train = y.train,
-                         x.insamp = designMatrix,
-                         x.outsamp = designMatrixOutSample,
-                         y.test =  NULL,
-                         n.h = n.h,
-                         nu = nu,
-                         pi.w = pi.w,
-                         pi.win = pi.win,
-                         eta.w = eta.w,
-                         eta.win = eta.win,
-                         lambda.r = lambda.r,
-                         alpha = alpha,
-                         m = m,
-                         iter = iterations,
-                         future = future,
-                         startvalues = NULL,
-                         activation = 'tanh',
-                         distribution = 'Normal',
-                         polynomial = 1,
-                         scale.factor = y.scale,
-                         scale.matrix = addScaleMat,
-                         verbose = T,
-                         parallel = F,
-                         fork = F)
+  n.h = c(rep(first.n.h, layers-1), last.n.h)
+  #Begin DESN forecasting
+  testing = deep.esn(y.train = y.train,
+                     x.insamp = designMatrix,
+                     x.outsamp = designMatrixOutSample,
+                     y.test = sets$yTest,
+                     n.h = n.h,
+                     nu = nu,
+                     pi.w = pi.w, 
+                     pi.win = pi.win,
+                     eta.w = eta.w,
+                     eta.win = eta.win,
+                     lambda.r = lambda.r,
+                     alpha = alpha,
+                     m = m,
+                     iter = iterations,
+                     future = testLen,
+                     layers = layers,
+                     reduced.units = reduced.units,
+                     startvalues = NULL,
+                     activation = 'tanh',
+                     distribution = 'Normal',
+                     scale.factor = y.scale,
+                     scale.matrix = addScaleMat,
+                     logNorm = FALSE,
+                     fork = FALSE,
+                     parallel = FALSE,
+                     verbose = TRUE)
   
   #Save predictions for each ensemble iteration
   mean.pred[,,f] = testing$predictions
@@ -126,4 +132,6 @@ for(f in 1:forward)
 #Forecast averages & MSE
 forc.mean = t(sapply(1:locations, function(x) colMeans(mean.pred[x,,])))
 mse = sum((t(sets$yTest)-forc.mean)^2)/(forward*locations); mse
+
+
 
