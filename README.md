@@ -1,5 +1,5 @@
 # 2022ESN
-Public codes for "Forecasting Quasi-Periodic Multi-Year Climate Processes with Stochastic Dynamic Neural Networks" by Matthew Bonas and Stefano Castruccio
+Public codes for "Calibrated Forecasts of Quasi-Periodic Climate Processes with Deep Echo State Networks and Penalized Quantile Regression" by Matthew Bonas, Christopher K. Wikle and Stefano Castruccio
 
 ## Data
 A dataset "SimulatedData.RData" with 10 variables (locations) and 500 time points. This data is to be used in conjunction with the R scripts.
